@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form class="filters" method="get" action="{{ url_for('index') }}">
+  <div class="search-row">
+    <label class="visually-hidden" for="q">{{ t.search_label.zh }} / {{ t.search_label.en }}</label>
+    <input type="search" id="q" name="q" value="{{ query }}"
+           placeholder="{{ t.search_placeholder.zh }}">
+    <button type="submit" class="btn">{{ t.search.zh }}</button>
+  </div>
+
+  <fieldset class="allergen-filter">
+    <legend>
+      <span lang="zh-CN">{{ t.filter_legend.zh }}</span>
+      <span class="legend-en" lang="en">{{ t.filter_legend.en }}</span>
+    </legend>
+    <div class="chips">
+      {% for key, label in allergen_labels.items() %}
+        <label class="chip {% if key in excluded %}chip-on{% endif %}">
+          <input type="checkbox" name="exclude" value="{{ key }}"
+                 {% if key in excluded %}checked{% endif %}>
+          <span class="chip-zh">{{ label.zh }}</span>
+          <span class="chip-en">{{ label.en }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <fieldset class="allergen-filter dietary-filter">
+    <legend>
+      <span lang="zh-CN">{{ t.dietary_legend.zh }}</span>
+      <span class="legend-en" lang="en">{{ t.dietary_legend.en }}</span>
+    </legend>
+    <div class="chips">
+      <label class="chip chip-diet {% if 'pork-free' in required_diet %}chip-on{% endif %}">
+        <input type="checkbox" name="dietary" value="pork-free"
+               {% if 'pork-free' in required_diet %}checked{% endif %}>
+        <span class="chip-zh">{{ t.pork_free_only.zh }}</span>
+        <span class="chip-en">{{ t.pork_free_only.en }}</span>
+      </label>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="btn">{{ t.apply.zh }} <span class="btn-en">{{ t.apply.en }}</span></button>
+      {% if excluded or required_diet or query %}
+        <a class="btn btn-quiet" href="{{ url_for('index') }}">{{ t.clear.zh }} <span class="btn-en">{{ t.clear.en }}</span></a>
+      {% endif %}
+    </div>
+  </fieldset>
+</form>
+
+<p class="result-count">
+  {% if cookies|length == total %}
+    <span lang="zh-CN">{{ t.showing_all.zh.format(total=total) }}</span>
+    <span class="count-en" lang="en">{{ t.showing_all.en.format(total=total) }}</span>
+  {% else %}
+    <span lang="zh-CN">{{ t.showing_filtered.zh.format(n=cookies|length, total=total) }}</span>
+    <span class="count-en" lang="en">{{ t.showing_filtered.en.format(n=cookies|length, total=total) }}</span>
+  {% endif %}
+</p>
+
+{% if cookies %}
+<ul class="cookie-grid">
+  {% for cookie in cookies %}
+  <li class="cookie-card {% if not cookie.available %}is-unavailable{% endif %}">
+    <a href="{{ url_for('cookie_detail', slug=cookie.slug) }}">
+      <div class="cookie-photo">
+        {% if image_exists(cookie.image) %}
+          <img src="{{ url_for('static', filename='images/cookies/' ~ cookie.image) }}"
+               alt="{{ cookie.name_zh }} {{ cookie.name_en }}" loading="lazy" width="400" height="400">
+        {% else %}
+          <div class="photo-placeholder" aria-hidden="true">🍪</div>
+        {% endif %}
+        {% if not cookie.available %}
+          <span class="badge badge-out">{{ t.sold_out.zh }}</span>
+        {% elif 'bestseller' in cookie.tags %}
+          <span class="badge badge-best">{{ t.bestseller.zh }}</span>
+        {% elif 'seasonal' in cookie.tags %}
+          <span class="badge badge-season">{{ t.seasonal.zh }}</span>
+        {% elif 'vegan' in cookie.tags %}
+          <span class="badge badge-season">{{ t.vegan.zh }}</span>
+        {% endif %}
+      </div>
+
+      <div class="cookie-body">
+        <h2 lang="zh-CN">{{ cookie.name_zh }}</h2>
+        <p class="name-en" lang="en">{{ cookie.name_en }}</p>
+        <p class="tagline" lang="zh-CN">{{ cookie.tagline_zh }}</p>
+        <p class="price">
+          {{ cookie.price | money }}
+          <span class="unit">{{ cookie.unit_zh }}</span>
+        </p>
+
+        <ul class="allergen-tags">
+          {% for d in cookie.dietary %}
+            <li class="tag tag-diet">{{ dietary_labels[d].zh }}</li>
+          {% endfor %}
+          {% if cookie.allergens %}
+            {% for a in cookie.allergens %}
+              <li class="tag tag-allergen">{{ allergen_labels[a].zh }}</li>
+            {% endfor %}
+          {% else %}
+            <li class="tag tag-free">{{ t.no_allergens.zh }}</li>
+          {% endif %}
+        </ul>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="empty">
+  <h2 lang="zh-CN">{{ t.empty_title.zh }}</h2>
+  <p lang="zh-CN">{{ t.empty_body.zh }}</p>
+  <p lang="en" class="muted">{{ t.empty_body.en }}</p>
+</div>
+{% endif %}
+{% endblock %}

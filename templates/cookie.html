@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cookie.name_zh }} {{ cookie.name_en }} — {{ shop.name_zh }}{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{{ url_for('index') }}">&larr; {{ t.back.zh }} / {{ t.back.en }}</a>
+
+<article class="cookie-detail">
+  <div class="detail-photo">
+    {% if image_exists(cookie.image) %}
+      <img src="{{ url_for('static', filename='images/cookies/' ~ cookie.image) }}"
+           alt="{{ cookie.name_zh }} {{ cookie.name_en }}" width="600" height="600">
+    {% else %}
+      <div class="photo-placeholder photo-placeholder-lg" aria-hidden="true">🍪</div>
+    {% endif %}
+  </div>
+
+  <div class="detail-info">
+    <h1 lang="zh-CN">{{ cookie.name_zh }}</h1>
+    <p class="name-en name-en-lg" lang="en">{{ cookie.name_en }}</p>
+    <p class="tagline" lang="zh-CN">{{ cookie.tagline_zh }}</p>
+    <p class="tagline tagline-en" lang="en">{{ cookie.tagline_en }}</p>
+
+    <p class="price price-lg">
+      {{ cookie.price | money }}
+      <span class="unit">{{ cookie.unit_zh }} · {{ cookie.unit_en }}</span>
+    </p>
+
+    {% if not cookie.available %}
+      <p class="notice notice-out">{{ t.sold_out_notice.zh }} <span class="notice-en">{{ t.sold_out_notice.en }}</span></p>
+    {% endif %}
+
+    <section>
+      <h2>{{ t.ingredients.zh }} <span class="h2-en">{{ t.ingredients.en }}</span></h2>
+      <ul class="ingredient-list">
+        {% for ing in cookie.ingredients %}
+          <li>
+            <span class="ing-name">
+              <span lang="zh-CN">{{ ing.zh }}</span>
+              <span class="ing-en" lang="en">{{ ing.en }}</span>
+            </span>
+            {% if ing.note_zh %}
+              <span class="ing-note">{{ ing.note_zh }}<span class="ing-note-en"> · {{ ing.note_en }}</span></span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section>
+      <h2>{{ t.allergens.zh }} <span class="h2-en">{{ t.allergens.en }}</span></h2>
+      {% if cookie.dietary %}
+        <ul class="allergen-tags dietary-row">
+          {% for d in cookie.dietary %}
+            <li class="tag tag-diet">{{ dietary_labels[d].zh }} <span class="tag-en">{{ dietary_labels[d].en }}</span></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if cookie.allergens %}
+        <ul class="allergen-tags">
+          {% for a in cookie.allergens %}
+            <li class="tag tag-allergen">{{ allergen_labels[a].zh }} <span class="tag-en">{{ allergen_labels[a].en }}</span></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="tag tag-free tag-standalone">
+          {{ t.no_allergens_long.zh }} <span class="tag-en">{{ t.no_allergens_long.en }}</span>
+        </p>
+      {% endif %}
+    </section>
+
+    {% if cookie.nutrition %}
+    <section>
+      <h2>{{ t.nutrition.zh }} <span class="h2-en">{{ t.nutrition.en }}</span></h2>
+      <p class="muted">
+        {{ t.per_piece.zh.format(g=cookie.nutrition.serving_size_g) }}
+        · {{ t.per_piece.en.format(g=cookie.nutrition.serving_size_g) }}
+      </p>
+      <table class="nutrition">
+        <tbody>
+          <tr>
+            <th scope="row">{{ t.nutrition_rows.calories.zh }} <span class="row-en">{{ t.nutrition_rows.calories.en }}</span></th>
+            <td>{{ cookie.nutrition.calories }} kcal</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ t.nutrition_rows.fat.zh }} <span class="row-en">{{ t.nutrition_rows.fat.en }}</span></th>
+            <td>{{ cookie.nutrition.fat_g }} g</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ t.nutrition_rows.carbs.zh }} <span class="row-en">{{ t.nutrition_rows.carbs.en }}</span></th>
+            <td>{{ cookie.nutrition.carbs_g }} g</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ t.nutrition_rows.sugar.zh }} <span class="row-en">{{ t.nutrition_rows.sugar.en }}</span></th>
+            <td>{{ cookie.nutrition.sugar_g }} g</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ t.nutrition_rows.protein.zh }} <span class="row-en">{{ t.nutrition_rows.protein.en }}</span></th>
+            <td>{{ cookie.nutrition.protein_g }} g</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

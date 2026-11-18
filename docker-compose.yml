@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    image: aiai-cookie:local
+    container_name: aiai-cookie
+    ports:
+      # Host 5000 -> container 8000, so the URL stays the same as `python app.py`.
+      - "5000:8000"
+    volumes:
+      # The app re-reads these when their mtime changes, so editing a cookie
+      # or a photo shows up on refresh without rebuilding the image.
+      - ./data:/app/data:ro
+      - ./static/images/cookies:/app/static/images/cookies:ro
+    restart: unless-stopped

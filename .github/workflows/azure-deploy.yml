@@ -1,0 +1,103 @@
+name: Build, test and deploy container
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: aiai-cookie     # must match the Azure resource name
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.name.outputs.image }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # GHCR rejects uppercase paths, and org/repo names often have capitals.
+      - name: Resolve lowercase image name
+        id: name
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate the catalogue parses
+        run: |
+          python -c "
+          import json
+          c = json.load(open('data/cookies.json'))
+          json.load(open('data/ui.json'))
+          slugs = [x['slug'] for x in c['cookies']]
+          assert len(slugs) == len(set(slugs)), 'duplicate slug'
+          for x in c['cookies']:
+              for a in x['allergens']:
+                  assert a in c['allergen_labels'], f\"unknown allergen {a} on {x['slug']}\"
+              for d in x.get('dietary', []):
+                  assert d in c['dietary_labels'], f\"unknown dietary tag {d} on {x['slug']}\"
+          print(len(slugs), 'cookies OK')
+          "
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: aiai-cookie:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Catch a broken page before it ever reaches Azure.
+      - name: Smoke-test the container
+        run: |
+          docker run -d --name ci -p 5000:8000 aiai-cookie:ci
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:5000/healthz > /dev/null && break
+            sleep 2
+          done
+          python scripts/smoke.py
+          docker rm -f ci
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.name.outputs.image }}:latest
+            ${{ steps.name.outputs.image }}:${{ github.sha }}
+          cache-from: type=gha
+
+  deploy:
+    needs: build-test-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to App Service for Containers
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ needs.build-test-push.outputs.image }}:${{ github.sha }}
+
+      # If you go with Container Apps instead, delete the step above, set an
+      # AZURE_CREDENTIALS secret, and use this:
+      #
+      # - uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - uses: azure/container-apps-deploy-action@v2
+      #   with:
+      #     containerAppName: aiai-cookie
+      #     resourceGroup: aiai-cookie-rg
+      #     imageToDeploy: ${{ needs.build-test-push.outputs.image }}:${{ github.sha }}

@@ -1,0 +1,51 @@
+{
+  "_comment": "Bilingual interface labels. Edit wording here; cookie data lives in cookies.json.",
+
+  "search_label":       { "zh": "搜索饼干或配料", "en": "Search cookies or ingredients" },
+  "search_placeholder": { "zh": "搜索饼干或配料…", "en": "Search a cookie or an ingredient…" },
+  "search":             { "zh": "搜索", "en": "Search" },
+
+  "filter_legend":  { "zh": "隐藏含有以下成分的饼干", "en": "Hide cookies containing" },
+  "dietary_legend": { "zh": "饮食需求", "en": "Dietary" },
+  "pork_free_only": { "zh": "只看无猪油", "en": "Pork-free only" },
+  "apply":         { "zh": "筛选", "en": "Apply" },
+  "clear":         { "zh": "清除", "en": "Clear" },
+
+  "showing_all":      { "zh": "共 {total} 款饼干", "en": "Showing all {total} cookies." },
+  "showing_filtered": { "zh": "显示 {n} / {total} 款饼干", "en": "Showing {n} of {total} cookies." },
+
+  "empty_title": { "zh": "没有符合条件的饼干", "en": "No cookies match those filters" },
+  "empty_body":  { "zh": "试试取消一个过敏原，或清除搜索条件。", "en": "Try removing an allergen or clearing the search." },
+
+  "back":        { "zh": "全部饼干", "en": "All cookies" },
+  "ingredients": { "zh": "配料表", "en": "Ingredients" },
+  "allergens":   { "zh": "过敏原", "en": "Allergens" },
+  "nutrition":   { "zh": "营养成分", "en": "Nutrition" },
+  "per_piece":   { "zh": "每块 {g} 克", "en": "Per piece ({g} g)" },
+
+  "no_allergens":       { "zh": "不含主要过敏原", "en": "No major allergens" },
+  "no_allergens_long":  { "zh": "不含八大类主要过敏原", "en": "Contains no major allergens" },
+
+  "sold_out":   { "zh": "售罄", "en": "Sold out" },
+  "bestseller": { "zh": "热销", "en": "Bestseller" },
+  "seasonal":   { "zh": "季节限定", "en": "Seasonal" },
+  "vegan":      { "zh": "纯素", "en": "Vegan" },
+
+  "sold_out_notice": { "zh": "目前售罄，补货中。", "en": "Currently sold out." },
+
+  "nutrition_rows": {
+    "calories": { "zh": "热量", "en": "Calories" },
+    "fat":      { "zh": "脂肪", "en": "Fat" },
+    "carbs":    { "zh": "碳水化合物", "en": "Carbohydrate" },
+    "sugar":    { "zh": "其中糖", "en": "of which sugars" },
+    "protein":  { "zh": "蛋白质", "en": "Protein" }
+  },
+
+  "not_found_title": { "zh": "没有这款饼干", "en": "We don't bake that one" },
+  "not_found_body":  { "zh": "这款饼干不在菜单上，可能已改名或下架。", "en": "That cookie isn't on the menu — it may have been renamed or retired." },
+
+  "disclaimer": {
+    "zh": "过敏原信息仅供参考。所有产品均在同时处理小麦、奶制品、鸡蛋、花生、坚果、大豆及芝麻的厨房中制作，无法保证完全不含微量成分。",
+    "en": "Allergen information is provided in good faith. All cookies are baked in a kitchen that also handles wheat, dairy, egg, peanuts, tree nuts, soy and sesame, so we cannot guarantee the absence of traces."
+  }
+}

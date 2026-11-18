@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ shop.name_zh }} {{ shop.name }}{% endblock %}</title>
+  <meta name="description" content="{{ shop.tagline_zh }} — {{ shop.tagline_en }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍪</text></svg>">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-mark" aria-hidden="true">🍪</span>
+      <span class="brand-text">
+        <strong>{{ shop.name_zh }}</strong>
+        <small lang="zh-CN">{{ shop.tagline_zh }}</small>
+        <small lang="en">{{ shop.tagline_en }}</small>
+      </span>
+    </a>
+  </header>
+
+  <main class="site-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p lang="zh-CN">{{ t.disclaimer.zh }}</p>
+    <p lang="en">{{ t.disclaimer.en }}</p>
+    <p class="muted">&copy; {{ shop.name_zh }} {{ shop.name }}</p>
+  </footer>
+</body>
+</html>

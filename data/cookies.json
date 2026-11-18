@@ -1,0 +1,185 @@
+{
+  "shop": {
+    "name": "aiai",
+    "name_zh": "爱爱饼家",
+    "tagline_zh": "小批量手工制作，每日新鲜出炉",
+    "tagline_en": "Small-batch Chinese biscuits, baked fresh daily.",
+    "currency_symbol": "RM"
+  },
+  "allergen_labels": {
+    "gluten":   { "zh": "麸质", "en": "Gluten" },
+    "dairy":    { "zh": "奶制品", "en": "Dairy" },
+    "egg":      { "zh": "鸡蛋", "en": "Egg" },
+    "peanut":   { "zh": "花生", "en": "Peanut" },
+    "tree-nut": { "zh": "坚果", "en": "Tree Nuts" },
+    "soy":      { "zh": "大豆", "en": "Soy" },
+    "sesame":   { "zh": "芝麻", "en": "Sesame" }
+  },
+  "dietary_labels": {
+    "pork-free": { "zh": "无猪油", "en": "No Lard" }
+  },
+  "cookies": [
+    {
+      "slug": "butter-cookie",
+      "name_zh": "牛油曲奇",
+      "name_en": "Butter Cookie",
+      "tagline_zh": "港式酥脆，奶香浓郁",
+      "tagline_en": "Hong Kong style — crisp, rich with butter.",
+      "price": 28.9,
+      "unit_zh": "每盒 12 块",
+      "unit_en": "box of 12",
+      "image": "butter-cookie.jpg",
+      "available": true,
+      "tags": ["bestseller"],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "小麦粉", "en": "Wheat flour" },
+        { "zh": "黄油", "en": "Butter", "note_zh": "新西兰进口", "note_en": "New Zealand" },
+        { "zh": "糖粉", "en": "Icing sugar" },
+        { "zh": "鸡蛋", "en": "Egg" },
+        { "zh": "香草精", "en": "Vanilla extract" },
+        { "zh": "食盐", "en": "Salt" }
+      ],
+      "allergens": ["gluten", "dairy", "egg"],
+      "nutrition": { "serving_size_g": 18, "calories": 95, "fat_g": 5.5, "carbs_g": 10.5, "sugar_g": 4.5, "protein_g": 1.2 }
+    },
+    {
+      "slug": "almond-cookie",
+      "name_zh": "杏仁饼",
+      "name_en": "Almond Cookie",
+      "tagline_zh": "澳门做法，入口即化，不含猪油",
+      "tagline_en": "Macau-style, melts on the tongue — made without lard.",
+      "price": 19.9,
+      "unit_zh": "每盒 10 块",
+      "unit_en": "box of 10",
+      "image": "almond-cookie.jpg",
+      "available": true,
+      "tags": [],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "绿豆粉", "en": "Mung bean flour" },
+        { "zh": "南杏仁", "en": "Sweet almond", "note_zh": "烘烤", "note_en": "roasted" },
+        { "zh": "糖粉", "en": "Icing sugar" },
+        { "zh": "植物酥油", "en": "Vegetable shortening", "note_zh": "不含猪油", "note_en": "no lard" }
+      ],
+      "allergens": ["tree-nut"],
+      "nutrition": { "serving_size_g": 20, "calories": 88, "fat_g": 3.8, "carbs_g": 12.0, "sugar_g": 5.0, "protein_g": 2.0 }
+    },
+    {
+      "slug": "egg-roll",
+      "name_zh": "鸡蛋卷",
+      "name_en": "Egg Roll",
+      "tagline_zh": "薄脆蛋香，手工卷制",
+      "tagline_en": "Thin, crisp, rolled by hand.",
+      "price": 32.9,
+      "unit_zh": "每盒 8 条",
+      "unit_en": "box of 8",
+      "image": "egg-roll.jpg",
+      "available": true,
+      "tags": [],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "小麦粉", "en": "Wheat flour" },
+        { "zh": "鸡蛋", "en": "Egg" },
+        { "zh": "黄油", "en": "Butter" },
+        { "zh": "椰浆", "en": "Coconut milk" },
+        { "zh": "白砂糖", "en": "Caster sugar" }
+      ],
+      "allergens": ["gluten", "dairy", "egg"],
+      "nutrition": { "serving_size_g": 15, "calories": 78, "fat_g": 4.0, "carbs_g": 9.0, "sugar_g": 3.5, "protein_g": 1.5 }
+    },
+    {
+      "slug": "walnut-crumble",
+      "name_zh": "核桃桃酥",
+      "name_en": "Walnut Crumble Cookie",
+      "tagline_zh": "一掰就碎，老式配方",
+      "tagline_en": "Snaps at a touch — the old recipe.",
+      "price": 18.9,
+      "unit_zh": "每盒 8 块",
+      "unit_en": "box of 8",
+      "image": "walnut-crumble.jpg",
+      "available": true,
+      "tags": [],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "小麦粉", "en": "Wheat flour" },
+        { "zh": "核桃仁", "en": "Walnut", "note_zh": "烘烤切碎", "note_en": "roasted, chopped" },
+        { "zh": "植物油", "en": "Vegetable oil" },
+        { "zh": "白砂糖", "en": "Caster sugar" },
+        { "zh": "鸡蛋", "en": "Egg" },
+        { "zh": "黑芝麻", "en": "Black sesame", "note_zh": "表面装饰", "note_en": "on top" },
+        { "zh": "小苏打", "en": "Baking soda" }
+      ],
+      "allergens": ["gluten", "egg", "tree-nut", "sesame"],
+      "nutrition": { "serving_size_g": 25, "calories": 130, "fat_g": 7.0, "carbs_g": 15.0, "sugar_g": 6.5, "protein_g": 2.2 }
+    },
+    {
+      "slug": "peanut-crisp",
+      "name_zh": "花生酥",
+      "name_en": "Peanut Crisp",
+      "tagline_zh": "花生香浓，甜而不腻",
+      "tagline_en": "Deeply nutty, sweet without cloying.",
+      "price": 15.9,
+      "unit_zh": "每盒 10 块",
+      "unit_en": "box of 10",
+      "image": "peanut-crisp.jpg",
+      "available": true,
+      "tags": [],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "花生", "en": "Peanut", "note_zh": "现炒", "note_en": "freshly roasted" },
+        { "zh": "小麦粉", "en": "Wheat flour" },
+        { "zh": "麦芽糖", "en": "Maltose" },
+        { "zh": "白砂糖", "en": "Caster sugar" },
+        { "zh": "植物油", "en": "Vegetable oil" }
+      ],
+      "allergens": ["gluten", "peanut"],
+      "nutrition": { "serving_size_g": 20, "calories": 105, "fat_g": 5.5, "carbs_g": 12.0, "sugar_g": 7.0, "protein_g": 3.0 }
+    },
+    {
+      "slug": "mung-bean-cake",
+      "name_zh": "绿豆糕",
+      "name_en": "Mung Bean Cake",
+      "tagline_zh": "清甜绵密，无奶无蛋",
+      "tagline_en": "Cool, dense and clean — no dairy, no egg.",
+      "price": 17.9,
+      "unit_zh": "每盒 9 块",
+      "unit_en": "box of 9",
+      "image": "mung-bean-cake.jpg",
+      "available": true,
+      "tags": ["vegan"],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "绿豆", "en": "Mung bean", "note_zh": "去皮蒸制", "note_en": "husked, steamed" },
+        { "zh": "白砂糖", "en": "Caster sugar" },
+        { "zh": "植物油", "en": "Vegetable oil" },
+        { "zh": "食盐", "en": "Salt" }
+      ],
+      "allergens": [],
+      "nutrition": { "serving_size_g": 30, "calories": 110, "fat_g": 3.0, "carbs_g": 19.0, "sugar_g": 9.0, "protein_g": 2.8 }
+    },
+    {
+      "slug": "sesame-thin-crisp",
+      "name_zh": "芝麻薄脆",
+      "name_en": "Sesame Thin Crisp",
+      "tagline_zh": "薄如蝉翼，满口芝麻",
+      "tagline_en": "Wafer-thin, loaded with sesame.",
+      "price": 21.9,
+      "unit_zh": "每盒 15 片",
+      "unit_en": "box of 15",
+      "image": "sesame-thin-crisp.jpg",
+      "available": false,
+      "tags": ["seasonal"],
+      "dietary": ["pork-free"],
+      "ingredients": [
+        { "zh": "小麦粉", "en": "Wheat flour" },
+        { "zh": "白芝麻", "en": "White sesame", "note_zh": "炒香", "note_en": "toasted" },
+        { "zh": "蛋白", "en": "Egg white" },
+        { "zh": "黄油", "en": "Butter" },
+        { "zh": "白砂糖", "en": "Caster sugar" }
+      ],
+      "allergens": ["gluten", "dairy", "egg", "sesame"],
+      "nutrition": { "serving_size_g": 10, "calories": 52, "fat_g": 2.8, "carbs_g": 5.8, "sugar_g": 2.5, "protein_g": 1.1 }
+    }
+  ]
+}

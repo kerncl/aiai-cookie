@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.not_found_title.zh }} — {{ shop.name_zh }}{% endblock %}
+
+{% block content %}
+<div class="empty">
+  <p class="big-emoji" aria-hidden="true">🍪</p>
+  <h1 lang="zh-CN">{{ t.not_found_title.zh }}</h1>
+  <p lang="zh-CN">{{ t.not_found_body.zh }}</p>
+  <p lang="en" class="muted">{{ t.not_found_body.en }}</p>
+  <p><a class="btn" href="{{ url_for('index') }}">{{ t.back.zh }} <span class="btn-en">{{ t.back.en }}</span></a></p>
+</div>
+{% endblock %}

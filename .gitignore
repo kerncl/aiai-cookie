@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+*.egg-info/
+
+# Original full-size photos — only the optimized copies get deployed.
+images_raw/
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
