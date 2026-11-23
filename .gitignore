@@ -9,6 +9,23 @@ env/
 # Original full-size photos — only the optimized copies get deployed.
 images_raw/
 
+# Terraform — state can contain secrets and must never be committed.
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# NOTE: .terraform.lock.hcl is deliberately NOT ignored — commit it so everyone
+# resolves the same provider versions.
+
 .vscode/
 .idea/
 .DS_Store

@@ -1,0 +1,26 @@
+# Copy to terraform.tfvars (gitignored) and fill in.
+#   cp terraform.tfvars.example terraform.tfvars
+
+subscription_id = "60f1fa6b-f10c-486b-a720-3ee4d299959f"
+
+# ---------------------------------------------------------------------------
+# IF ADOPTING the resources you built by hand (keeping your live URL),
+# uncomment this so Terraform matches the workspace the CLI generated.
+# Without it, Terraform plans to replace the workspace AND the environment,
+# which changes your public address.
+# ---------------------------------------------------------------------------
+# log_analytics_name = "workspace-rgaiaicookieC0FX"
+
+# ---------------------------------------------------------------------------
+# Defaults below are already correct — shown so you can see the knobs.
+# ---------------------------------------------------------------------------
+# location            = "southeastasia"
+# resource_group_name = "rg-aiai-cookie"
+# environment_name    = "aiai-env"
+# app_name            = "aiai-cookie"
+# image               = "ghcr.io/kerncl/aiai-cookie:latest"
+# target_port         = 8000
+# cpu                 = 0.25
+# memory              = "0.5Gi"
+# min_replicas        = 0     # 0 = RM 0. Set 1 to kill cold starts (~RM 23/mo)
+# max_replicas        = 2     # hard spend ceiling
