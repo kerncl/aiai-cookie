@@ -1,0 +1,3 @@
+Create resource group: `az group create --name rg-aiai-cookie --location southeastasia`
+Create container environment: `az containerapp env create --name aiai-env --resource-group rg-aiai-cookie --location southeastasia`
+Create container app: `az containerapp create --name aiai-cookie --resource-group rg-aiai-cookie --environment aiai-env --image ghcr.io/kerncl/aiai-cookie:latest --target-port 8000 --ingress external --min-replicas 0 --max-replicas 2 --cpu 0.25 --memory 0.5Gi`

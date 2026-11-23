@@ -1,12 +1,17 @@
-name: Build, test and deploy container
+name: Build, test and deploy to Azure Container Apps
 
 on:
   push:
     branches: [main]
+    # Docs-only changes shouldn't rebuild a 153 MB image.
+    paths-ignore:
+      - '**.md'
+      - 'terraform/**'
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: aiai-cookie     # must match the Azure resource name
+  AZURE_RESOURCE_GROUP: rg-aiai-cookie
+  AZURE_CONTAINER_APP: aiai-cookie
 
 jobs:
   build-test-push:
@@ -82,22 +87,50 @@ jobs:
   deploy:
     needs: build-test-push
     runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to App Service for Containers
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ needs.build-test-push.outputs.image }}:${{ github.sha }}
 
-      # If you go with Container Apps instead, delete the step above, set an
-      # AZURE_CREDENTIALS secret, and use this:
-      #
-      # - uses: azure/login@v2
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # - uses: azure/container-apps-deploy-action@v2
-      #   with:
-      #     containerAppName: aiai-cookie
-      #     resourceGroup: aiai-cookie-rg
-      #     imageToDeploy: ${{ needs.build-test-push.outputs.image }}:${{ github.sha }}
+    # id-token: write is REQUIRED for OIDC. Without it azure/login fails with
+    # "Unable to get ACTIONS_ID_TOKEN_REQUEST_URL" — the single most common
+    # mistake when setting this up.
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      # No password anywhere. GitHub presents a short-lived token proving this
+      # workflow is kerncl/aiai-cookie on main; Azure validates it against the
+      # federated credential and issues an access token valid for minutes.
+      - name: Sign in to Azure (OIDC, no stored secret)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Deploying by commit SHA, not :latest — so the running revision is always
+      # traceable to exact source, and rollback is just redeploying an older SHA.
+      - name: Deploy new image
+        run: |
+          az containerapp update \
+            --name "$AZURE_CONTAINER_APP" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --image "${{ needs.build-test-push.outputs.image }}:${{ github.sha }}" \
+            --output none
+          echo "Deployed ${{ github.sha }}"
+
+      - name: Verify the live site
+        run: |
+          FQDN=$(az containerapp show \
+            --name "$AZURE_CONTAINER_APP" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          echo "Checking https://$FQDN"
+
+          # min-replicas is 0, so this may be a cold start. Allow for it.
+          for i in $(seq 1 20); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 "https://$FQDN/healthz" || true)
+            [ "$code" = "200" ] && { echo "Live: https://$FQDN"; exit 0; }
+            echo "  attempt $i -> $code, retrying..."
+            sleep 10
+          done
+          echo "Site did not return 200 after deploy"
+          exit 1

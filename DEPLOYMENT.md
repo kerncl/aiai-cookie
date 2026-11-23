@@ -167,16 +167,96 @@ az containerapp show --name aiai-cookie --resource-group rg-aiai-cookie --query 
 - [ ] **Fix the CI deploy job** ⚠️ — see below
 - [ ] Confirm a push to `main` deploys automatically
 
-### ⚠️ Known: the CI deploy job currently fails
+### Wiring CI to deploy — OIDC, no stored secret
 
-`.github/workflows/azure-deploy.yml` has two jobs. `build-test-push` **succeeds** —
-that's how the image reached GHCR. The `deploy` job **fails**, because it targets
-**App Service**, which was the earlier plan, and needs an
-`AZURE_WEBAPP_PUBLISH_PROFILE` secret that doesn't exist.
+The workflow has been rewritten for Container Apps. Four bugs were fixed:
 
-So a red ✗ on your Actions tab is expected right now, and harmless — the image still
-published. To fix, swap the deploy step for the Container Apps one already commented
-out at the bottom of that file, and add an `AZURE_CREDENTIALS` secret.
+| Was wrong | Now |
+|---|---|
+| `azure/webapps-deploy` — targets **App Service** | `az containerapp update` |
+| Needed `AZURE_WEBAPP_PUBLISH_PROFILE` (App Service concept) | OIDC federated identity |
+| Stale `AZURE_WEBAPP_NAME` variable | `AZURE_CONTAINER_APP` |
+| `resourceGroup: aiai-cookie-rg` — **words reversed** | `rg-aiai-cookie` |
+
+It also now skips rebuilds for `**.md` and `terraform/**` changes.
+
+**How OIDC works:** GitHub presents a short-lived token asserting *"I am
+`kerncl/aiai-cookie`, branch `main`."* Azure checks that claim against a federated
+credential you register, then issues an access token valid for minutes.
+**No password is ever created or stored.** Nothing to leak or rotate.
+
+#### Step 1 — Create the identity (run these)
+
+```bash
+SUB=60f1fa6b-f10c-486b-a720-3ee4d299959f
+TENANT=30ab3971-2c14-43f2-9fff-fa8914b54591
+REPO=kerncl/aiai-cookie
+RG=rg-aiai-cookie
+
+# a) App registration — the identity CI will use
+APP_ID=$(az ad app create --display-name "github-aiai-cookie" --query appId -o tsv)
+echo "APP_ID=$APP_ID"        # save this
+
+# b) Service principal for that app
+az ad sp create --id "$APP_ID"
+
+# c) Federated credential — trusts ONLY this repo, ONLY the main branch
+az ad app federated-credential create --id "$APP_ID" --parameters "{
+  \"name\": \"github-main\",
+  \"issuer\": \"https://token.actions.githubusercontent.com\",
+  \"subject\": \"repo:${REPO}:ref:refs/heads/main\",
+  \"audiences\": [\"api://AzureADTokenExchange\"]
+}"
+
+# d) Permission — Contributor on the RESOURCE GROUP only, not the subscription
+az role assignment create \
+  --assignee "$APP_ID" \
+  --role Contributor \
+  --scope "/subscriptions/${SUB}/resourceGroups/${RG}"
+```
+
+The `subject` in (c) is the security boundary. A PR branch, a fork, or another
+repo produces a different subject and is refused. Least privilege in (d) means a
+compromised pipeline can only touch `rg-aiai-cookie`.
+
+#### Step 2 — Add three GitHub secrets
+
+⚠️ Your `gh` CLI is authenticated to **github.amd.com**, not github.com, so
+`gh secret set` would target the wrong host. Use the web UI:
+
+**github.com/kerncl/aiai-cookie → Settings → Secrets and variables → Actions → New repository secret**
+
+| Name | Value |
+|---|---|
+| `AZURE_CLIENT_ID` | the `APP_ID` from step (a) |
+| `AZURE_TENANT_ID` | `30ab3971-2c14-43f2-9fff-fa8914b54591` |
+| `AZURE_SUBSCRIPTION_ID` | `60f1fa6b-f10c-486b-a720-3ee4d299959f` |
+
+None of these are secret in the password sense — they're identifiers. The
+security comes from the federated credential, not from hiding them.
+
+#### Step 3 — Test it
+
+```bash
+git add .github/workflows/azure-deploy.yml
+git commit -m "CI: deploy to Container Apps via OIDC"
+git push
+```
+
+Watch the Actions tab. Both jobs should go green, and the deploy job prints your
+live URL.
+
+Then try the real loop: change a price in `data/cookies.json`, push, and watch it
+reach the live site in ~3 minutes with no manual steps.
+
+#### If it fails
+
+| Error | Cause |
+|---|---|
+| `Unable to get ACTIONS_ID_TOKEN_REQUEST_URL` | Missing `permissions: id-token: write` — the #1 OIDC mistake |
+| `AADSTS70021: No matching federated identity record` | `subject` doesn't match. Pushing from a branch other than `main`? |
+| `AuthorizationFailed` | Role assignment missing or wrong scope; can take a minute to propagate |
+| `ResourceGroupNotFound` | Check `rg-aiai-cookie`, not `aiai-cookie-rg` |
 
 ## Phase 8 — Optional extras ⬜
 
